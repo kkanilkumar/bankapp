@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DataService } from '../services/data.service';
 
@@ -15,9 +15,9 @@ export class RegisterComponent implements OnInit {
 
   //Form Group
   registerForm = this.fb.group({
-    accno: '',
-    paswrd: '',
-    uname: '',
+    accno: ['', [Validators.required, Validators.pattern('[0-9]*')]],
+    paswrd: [''],
+    uname: ['', [Validators.required, Validators.pattern('[a-zA-Z ]*')]],
   });
 
   constructor(
@@ -28,15 +28,19 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit(): void {}
   register() {
-    var uname = this.uname;
-    var accno = this.accno;
-    var paswrd = this.paswrd;
-    const result = this.ds.register(accno, uname, paswrd);
-    if (result) {
-      alert('Successfully Registered!!!');
-      this.router.navigateByUrl('');
+    var uname = this.registerForm.value.uname;
+    var accno = this.registerForm.value.accno;
+    var paswrd = this.registerForm.value.paswrd;
+    if (this.registerForm.valid) {
+      const result = this.ds.register(accno, uname, paswrd);
+      if (result) {
+        alert('Successfully Registered!!!');
+        this.router.navigateByUrl('');
+      } else {
+        alert('Account Number Already Exists!!! Please Login');
+      }
     } else {
-      alert('Account Number Already Exists!!! Please Login');
+      alert('Invalid Form');
     }
   }
 }
